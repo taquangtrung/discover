@@ -13,6 +13,29 @@ Gollvm are also needed.
 
 The following commands are tested and work well with both on Linux and macOS.
 
+Ninja and Opam
+^^^^^^^^^^^^^^^^
+
+Install Ninja, Opam
+
+.. code-block:: sh
+
+   # For debian based systems,
+   sudo apt-get install ninja-build opam
+
+   # For Arch Linux
+   pacman -S ninja opam
+
+   # For MacOS
+   brew install ninja opam
+
+
+Install mandatory Opam packages
+
+.. code-block:: sh
+
+   opam install ctypes
+
 LLVM and Clang
 ^^^^^^^^^^^^^^^^
 
@@ -24,17 +47,7 @@ compilation of LLVM.
 
 .. code-block:: sh
 
-   # Install ninja
-   # For debian based systems,
-   sudo apt-get install ninja-build opam
-   # For Arch Linux 
-   pacman -S ninja opam 
-   # For MacOS
-   brew install ninja opam
 
-   # Install ctypes
-   opam install ctypes
-   
    # Prepare installation folder
    export LLVMDIR=$HOME/llvm           # root path to LLVM workspace
    export LLVMINSTALLDIR=$HOME/llvm/llvm-sbip
