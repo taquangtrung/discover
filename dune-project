@@ -22,6 +22,7 @@
           ;; llvm             ;; LLVM bindings will be installed by llvm-sbip
           yaml
           ezjsonm
+          ctypes
           (ocamlformat :dev)  ;; use the developing version of Ocamlformat
           ;; (extcore :dev)   ;; need to install extcore from custom repository
           menhir

@@ -4,7 +4,7 @@ Installation
 Prerequisites
 ---------------
 
-To build Discover, you need to have LLVM and OCaml installed in your machine.
+To build Discover, you need to have LLVM, Ninja and OCaml installed in your machine.
 Currently, we support the compilation of Discover Linux and macOS, while we have
 not tested on Windows yet.
 
@@ -24,6 +24,17 @@ compilation of LLVM.
 
 .. code-block:: sh
 
+   # Install ninja
+   # For debian based systems,
+   sudo apt-get install ninja-build opam
+   # For Arch Linux 
+   pacman -S ninja opam 
+   # For MacOS
+   brew install ninja opam
+
+   # Install ctypes
+   opam install ctypes
+   
    # Prepare installation folder
    export LLVMDIR=$HOME/llvm           # root path to LLVM workspace
    export LLVMINSTALLDIR=$HOME/llvm/llvm-sbip
@@ -99,7 +110,6 @@ tool (opam). Currently, we are using OCaml 4.13.1, or newer.
 
    # Install dependencies of this project
    opam pin add outils git://github.com/sbip-sg/ocaml-utils.git
-   opam install . --deps-only --with-test
 
 Note that ``llvm`` bindings for OCaml will be installed by our `customized LLVM
 <https://github.com/sbip-sg/llvm-project>`_ as in the above section into the
@@ -189,6 +199,7 @@ Discover can be compiled by the following commands
 
    # Compile Discover
    cd $WORKDIR/discover
+   opam install . --deps-only --with-test
    make
 
 We also need to compile an additional utility tool named ``normalizer`` and copy
