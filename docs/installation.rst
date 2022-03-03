@@ -102,7 +102,9 @@ tool (opam). Currently, we are using OCaml 4.13.1, or newer.
    opam install . --deps-only --with-test
 
 Note that ``llvm`` bindings for OCaml will be installed by our `customized LLVM
-<https://github.com/sbip-sg/llvm-project>`_ as in the above section.
+<https://github.com/sbip-sg/llvm-project>`_ as in the above section into the
+folder: `$HOME/.opam/4.13.1/lib/llvm`.
+
 
 Solang
 ^^^^^^^
