@@ -4,7 +4,7 @@ Development
 IDE and editors
 -----------------
 
-- Suggested editor: Emacs, Vim, Visual Studio Code.
+- Suggested editors for OCaml development: Emacs, Vim, Visual Studio Code.
 
 - Code completion, navigation, outline by `merlin
   <https://github.com/ocaml/merlin>`_ and `ocaml-lsp
@@ -22,13 +22,20 @@ IDE and editors
 
      opam install ocamlformat ocp-indent
 
+- If you are using Emacs, then consider checking out this `Spacemacs Starter Kit
+  <https://github.com/taquangtrung/spacemacs-starter>`_, which is already
+  pre-configured with `merlin`, `ocaml-lsp`, `ocamlformat`, `ocp-indent` to
+  support OCaml development.
 
 OCaml Programming Guidelines
 -------------------------------
 
 - Programming guidelines and coding standards can be referred to:
-  + `OCaml programming guidelines <https://ocaml.org/learn/tutorials/guidelines.html>`_, from official OCamlwebsite.
-  + `Real World Ocaml <https://dev.realworldocaml.org/index.html>`_ (free, online book).
+  + `OCaml programming guidelines
+    <https://ocaml.org/learn/tutorials/guidelines.html>`_, from official
+    OCamlwebsite.
+  + `Real World Ocaml <https://dev.realworldocaml.org/index.html>`_ (free,
+    online book).
 
 - Indentation by `ocp-indent <https://github.com/OCamlPro/ocp-indent>`_ and
   follow the rules configured in in ``discover/.ocp-indent``.
