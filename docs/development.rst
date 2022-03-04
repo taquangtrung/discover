@@ -97,7 +97,7 @@ Autoformat project using Dune
 
      opam pin --dev-repo ocamlformat
 
-- Formatting the project by running ``dune``:
+- Formatting the project by running the following ``dune`` command:
 
   .. code-block:: sh
 
@@ -107,18 +107,7 @@ Autoformat project using Dune
      # Replace the source files by the corrected versions.
      dune promote
 
-  or just run ``make format``:
+  or just run ``make format`` from the root folder of the project.
 
-  .. code-block:: sh
-
-     make format
-
-  and
-
-  .. code-block:: ocaml
-
-     let x = 1 in
-     let b = 2 in
-     let x = 1 in
 
 - Read more at this `formatting project tutorial <https://dune.readthedocs.io/en/stable/formatting.html>`_.
