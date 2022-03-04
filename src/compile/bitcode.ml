@@ -47,9 +47,13 @@ let process_module (input_file : string) (modul : LL.llmodule) : LI.program =
 
 (** Disassemble LLVM bitcode (.bc files) to IR (.ll files) *)
 let disassemble_bitcode (filename : string) : unit =
-  match PS.run_command [ !llvm_dis_exe; filename ] with
-  | Ok () -> ()
-  | Error log -> errorf ~log "Failed to disassemble bitcode file: %s" filename
+  match Sys.file_exists filename with
+  | `No | `Unknown ->
+    errorf "Failed to disasemble LLVM bitcode (file not found): %s" filename
+  | `Yes ->
+    match PS.run_command [ !llvm_dis_exe; filename ] with
+    | Ok () -> ()
+    | Error log -> errorf ~log "Failed to disassemble bitcode file: %s" filename
 ;;
 
 (** Optimize LLVM bitcode by running the LLVM's opt tool *)
