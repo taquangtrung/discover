@@ -1,5 +1,5 @@
-pragma solidity ^0.4.2;
-contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
+pragma solidity >=0.7.0;
+interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes memory _extraData) external; }
 
 contract MyToken {
     /* Public variables of the token */
@@ -17,11 +17,11 @@ contract MyToken {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function MyToken(
+    constructor(
         uint256 initialSupply,
-        string tokenName,
+        string memory tokenName,
         uint8 decimalUnits,
-        string tokenSymbol
+        string memory tokenSymbol
         ) {
         balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
         totalSupply = initialSupply;                        // Update total supply
@@ -31,45 +31,48 @@ contract MyToken {
     }
 
     /* Send coins */
-    function transfer(address _to, uint256 _value) {
-        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows
+    function transfer(address _to, uint256 _value) external {
+        require(balanceOf[msg.sender] >= _value);           // Check if the sender has enough
+        require(balanceOf[_to] + _value >= balanceOf[_to]); // Check for overflows
         balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
-        Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
+        emit Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
     }
 
     /* Allow another contract to spend some tokens in your behalf */
-    function approve(address _spender, uint256 _value)
+    function approve(address _spender, uint256 _value) external 
         returns (bool success) {
         allowance[msg.sender][_spender] = _value;
         return true;
     }
 
     /* Approve and then comunicate the approved contract in a single tx */
-    function approveAndCall(address _spender, uint256 _value, bytes _extraData)
+    function approveAndCall(address _spender, uint256 _value, bytes calldata _extraData) external
         returns (bool success) {
         tokenRecipient spender = tokenRecipient(_spender);
-        if (approve(_spender, _value)) {
-            spender.receiveApproval(msg.sender, _value, this, _extraData);
+        if (this.approve(_spender, _value)) {
+            spender.receiveApproval(msg.sender, _value, address(this), _extraData);
             return true;
         }
     }        
 
     /* A contract attempts to get the coins */
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
-        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
+        require(balanceOf[_from] >= _value);                 // Check if the sender has enough
+        require(balanceOf[_to] + _value >= balanceOf[_to]);  // Check for overflows
+        require(_value <= allowance[_from][msg.sender]);   // Check allowance
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         allowance[_from][msg.sender] -= _value;
-        Transfer(_from, _to, _value);
+        emit Transfer(_from, _to, _value);
         return true;
     }
 
     /* This unnamed function is called whenever someone tries to send ether to it */
-    function () {
-        throw;     // Prevents accidental sending of ether
-    }
+    // function () {
+    //     throw;     // Prevents accidental sending of ether
+    // }
+    fallback() external {
+        revert();
+    }    
 }

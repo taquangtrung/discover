@@ -1,0 +1,92 @@
+Using solang version v0.1.10-5-g6f56cd0
+Using ~/workspace/discover/discover --bug-integer-all --dfa-range ...
+================================================================================
+COMPILATION FAILED:
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/016.sol
+solang: /home/runner/work/solang/solang/llvm-project/llvm/lib/IR/Instructions.cpp:1480: void llvm::StoreInst::AssertOK(): Assertion `cast<PointerType>(getOperand(1)->getType()) ->isOpaqueOrPointeeTypeMatches(getOperand(0)->getType()) && "Ptr must be a pointer to Val type!"' failed.
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/006.sol
+Line [0m[34m141[0m [0m[1m[38;5;9merror[0m[1m: unknown function or type ‘selfdestruct’[0m
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/019.sol
+Line [0m[34m60[0m [0m[1m[38;5;9merror[0m[1m: ethereum address literal ‘0x003230BBE64eccD66f62913679C8966Cf9F41166’ not supported on target solana[0m
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/002.sol
+Line [0m[34m53[0m [0m[1m[38;5;9merror[0m[1m: unrecognised token `)', expected "++", "--", ".", "[", "days", "ether", "finney", "hours", "minutes", "seconds", "szabo", "weeks", "wei"[0m
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/024.sol
+Line [0m[34m208[0m [0m[1m[38;5;9merror[0m[1m: unrecognised token `if', expected "else"[0m
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/023.sol
+Line [0m[34m9[0m [0m[1m[38;5;9merror[0m[1m: ethereum address literal ‘0x895a2255775319e8e6EFA9742F124ffF88c6C674’ not supported on target solana[0m
+
+================================================================================
+COMPILATION SUCCESS:
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/020.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/020.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/005.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/005.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/001.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/001.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/011.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/011.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/010.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/010.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/012.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/022.sol
+Discover run success? NO
+ERROR: Compile Solidity smart contract: no output file is generated!
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/009.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/009.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/014.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/018.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/004.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/004.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/008.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/017.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/021.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/021.sol
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/015.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/013.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/025.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/007.sol
+Discover run success? YES
+--------------------------------------------------------------------------------
+~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/003.sol
+Discover run success? NO
+Line ~/bin/solang ERROR: Failed to compile file: ~/workspace/discover/benchmarks/verismart/verismart-updated/benchmarks/zeus/003.sol

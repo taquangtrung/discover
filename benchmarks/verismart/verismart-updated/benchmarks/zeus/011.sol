@@ -1,20 +1,19 @@
-pragma solidity 0.4.25;
-
+pragma solidity >=0.7.0;
 contract owned {
   address public owner;
-  function owned() {
+  constructor() {
     owner = msg.sender;
   }
   modifier onlyOwner {
-    if(msg.sender != owner) throw;
+    require(msg.sender == owner);
     _;
   }
-  function transferOwnership(address newOwner) onlyOwner {
+  function transferOwnership(address newOwner) external onlyOwner {
     owner = newOwner;
   }
 }
 
-contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
+interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes memory _extraData) external; }
 
 contract RTokenBase {
   /* contract info */
@@ -32,7 +31,7 @@ contract RTokenBase {
   event Transfer(address indexed from, address indexed to, uint256 value);
 
   /* Constructor */
-  function RTokenBase(uint256 initialAmt, string tokenName, string tokenSymbol, uint8 decimalUnits) payable {
+  constructor(uint256 initialAmt, string memory tokenName, string memory tokenSymbol, uint8 decimalUnits) payable {
     balanceMap[msg.sender] = initialAmt;
     totalSupply = initialAmt;
     name = tokenName;
@@ -41,131 +40,111 @@ contract RTokenBase {
   }
 
   /* send tokens */
-  function transfer(address _to, uint256 _value) payable {
-    if(
-        (balanceMap[msg.sender] < _value) ||
-        (balanceMap[_to] + _value < balanceMap[_to])
-      )
-      throw;
+  function transfer(address _to, uint256 _value) external virtual payable {
+      require((balanceMap[msg.sender] >= _value) &&
+              (balanceMap[_to] + _value >= balanceMap[_to])) ;
     balanceMap[msg.sender] -= _value;
     balanceMap[_to] += _value;
-    Transfer(msg.sender, _to, _value);
+    emit Transfer(msg.sender, _to, _value);
   }
 
   /* allow other contracts to spend tokens */
-  function approve(address _spender, uint256 _value) returns (bool success) {
+  function approve(address _spender, uint256 _value) external returns (bool success) {
     allowance[msg.sender][_spender] = _value;
     tokenRecipient spender = tokenRecipient(_spender);
     return true;
   }
 
   /* approve and notify */
-  function approveAndCall(address _spender, uint256 _value, bytes _stuff) returns (bool success) {
+  function approveAndCall(address _spender, uint256 _value, bytes memory _stuff) external  returns (bool success) {
     tokenRecipient spender = tokenRecipient(_spender);
-    if(approve(_spender, _value)) {
-      spender.receiveApproval(msg.sender, _value, this, _stuff);
+    if(this.approve(_spender, _value)) {
+      spender.receiveApproval(msg.sender, _value, address(this), _stuff);
       return true;
     }
   }
 
   /* do a transfer */
-  function transferFrom(address _from, address _to, uint256 _value) payable returns (bool success) {
-    if(
-        (balanceMap[_from] < _value) ||
-        (balanceMap[_to] + _value < balanceMap[_to]) ||
-        (_value > allowance[_from][msg.sender])
-      )
-      throw;
+  function transferFrom(address _from, address _to, uint256 _value) payable external virtual returns (bool success) {
+      require((balanceMap[_from] >= _value) &&
+        (balanceMap[_to] + _value >= balanceMap[_to]) &&
+        (_value <= allowance[_from][msg.sender]));
     balanceMap[_from] -= _value;
     balanceMap[_to] += _value;
     allowance[_from][msg.sender] -= _value;
-    Transfer(_from, _to, _value);
+    emit Transfer(_from, _to, _value);
     return true;
   }
 
-  /* trap bad sends */
-  function () {
-    throw;
-  }
+
 }
 
 contract RTokenMain is owned, RTokenBase {
   uint256 public sellPrice;
   uint256 public buyPrice;
-  uint256 public totalSupply;
 
   mapping(address => bool) public frozenAccount;
 
   event FrozenFunds(address target, bool frozen);
 
-  function RTokenMain(uint256 initialAmt, string tokenName, string tokenSymbol, uint8 decimals, address centralMinter)
+  constructor(uint256 initialAmt, string memory tokenName, string memory tokenSymbol, uint8 decimals, address centralMinter)
     RTokenBase(initialAmt, tokenName, tokenSymbol, decimals) {
-      if(centralMinter != 0)
+      if(centralMinter != address(0))
         owner = centralMinter;
       balanceMap[owner] = initialAmt;
     }
 
-  function transfer(address _to, uint256 _value) payable {
-    if(
-        (balanceMap[msg.sender] < _value) ||
-        (balanceMap[_to] + _value < balanceMap[_to]) ||
-        (frozenAccount[msg.sender])
-      )
-      throw;
+  function transfer(address _to, uint256 _value) external override payable {
+      require((balanceMap[msg.sender] >= _value) &&
+              (balanceMap[_to] + _value >= balanceMap[_to]) &&
+              (!frozenAccount[msg.sender]));
     balanceMap[msg.sender] -= _value;
     balanceMap[_to] += _value;
-    Transfer(msg.sender, _to, _value);
+    emit Transfer(msg.sender, _to, _value);
   }
 
-  function transferFrom(address _from, address _to, uint256 _value) payable returns (bool success) {
-    if(
-        (frozenAccount[_from]) ||
-        (balanceMap[_from] < _value) ||
-        (balanceMap[_to] + _value < balanceMap[_to]) ||
-        (_value > allowance[_from][msg.sender])
-      )
-      throw;
+  function transferFrom(address _from, address _to, uint256 _value) payable external override returns (bool success) {
+      require((!frozenAccount[_from]) &&
+        (balanceMap[_from] >= _value) &&
+        (balanceMap[_to] + _value >= balanceMap[_to]) &&
+        (_value <= allowance[_from][msg.sender]));
     balanceMap[_from] -= _value;
     balanceMap[_to] += _value;
     allowance[_from][msg.sender] -= _value;
-    Transfer(_from, _to, _value);
+    emit Transfer(_from, _to, _value);
     return true;
   }
 
-  function mintToken(address target, uint256 mintedAmount) onlyOwner {
+  function mintToken(address target, uint256 mintedAmount) external onlyOwner {
     balanceMap[target] += mintedAmount;
     totalSupply += mintedAmount;
-    Transfer(0, this, mintedAmount);
-    Transfer(this, target, mintedAmount);
+    emit Transfer(address(0), address(this), mintedAmount);
+    emit Transfer(address(this), target, mintedAmount);
   }
 
-  function freezeAccount(address target, bool freeze) onlyOwner {
+  function freezeAccount(address target, bool freeze) external onlyOwner {
     frozenAccount[target] = freeze;
-    FrozenFunds(target, freeze);
+    emit FrozenFunds(target, freeze);
   }
 
-  function setPrices(uint256 newSellPrice, uint256 newBuyPrice) onlyOwner {
+  function setPrices(uint256 newSellPrice, uint256 newBuyPrice) external onlyOwner {
     sellPrice = newSellPrice;
     buyPrice = newBuyPrice;
   }
 
-  function buy() payable {
+  function buy() external payable {
     uint amount = msg.value/buyPrice;
-    if(balanceMap[this] < amount)
-      throw;
+    require(balanceMap[address(this)] >= amount);
     balanceMap[msg.sender] += amount;
-    balanceMap[this] -= amount;
-    Transfer(this, msg.sender, amount);
+    balanceMap[address(this)] -= amount;
+    emit Transfer(address(this), msg.sender, amount);
   }
 
-  function sell(uint256 amount) {
-    if(balanceMap[msg.sender] < amount)
-      throw;
+  function sell(uint256 amount) external {
+    require(balanceMap[msg.sender] >= amount);
     balanceMap[msg.sender] -= amount;
-    balanceMap[this] += amount;
-    if(!msg.sender.send(amount*sellPrice))
-      throw;
-    else
-      Transfer(msg.sender, this, amount);
+    balanceMap[address(this)] += amount;
+    require((payable(msg.sender)).send(amount*sellPrice));
+    emit Transfer(msg.sender, address(this), amount);
   }
 }

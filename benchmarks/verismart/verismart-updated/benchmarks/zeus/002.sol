@@ -1,38 +1,40 @@
-pragma solidity ^0.4.8;
+pragma solidity >=0.7.0;
 
 contract TimeLockSend {
-    address sender;
-    address recipient;
+    address payable sender;
+    address payable recipient;
     uint256 created;
     uint256 deadline;
     
-    function TimeLockSend(address _sender, address _recipient, uint256 _deadline) payable {
-        if (msg.value <= 0) {
-            throw;
-        }
+    constructor(address payable _sender, address payable _recipient, uint256 _deadline) payable {
+        require (msg.value > 0) ;
         sender = _sender;
         recipient = _recipient;
-        created = now;
+        created = block.timestamp;
         deadline = _deadline;
     }
     
-    function withdraw() {
+    function withdraw() external {
         if (msg.sender == recipient) {
             selfdestruct(recipient);
-        } else if (msg.sender == sender && now > deadline) {
+        } else if (msg.sender == sender && block.timestamp > deadline) {
             selfdestruct(sender);
         } else {
-            throw;
+            revert();
         }
     }
     
-    function () {
-        throw;
-    }
+    // no longer required in newer version of solidty
+    // function () {
+    //     throw;
+    // }
+    fallback() external {
+        revert();
+    }    
 }
 
 contract SafeSender {
-    address owner;
+    address payable owner;
     
     event TimeLockSendCreated(
         address indexed sender, 
@@ -41,20 +43,16 @@ contract SafeSender {
         address safeSendAddress
     );
     
-    function SafeSender() {
-        owner = msg.sender;
+    constructor() {
+        owner = payable(msg.sender);
     }
     
-    function safeSend(address recipient, uint256 timeLimit) payable returns (address) {
-        if (msg.value <= 0 || (now + timeLimit) <= now) {
-            throw;
-        }
-        uint256 deadline = now + timeLimit;
-        TimeLockSend newSend = (new TimeLockSend).value(msg.value)(msg.sender, recipient, deadline);
-        if (address(newSend) == address(0)) {
-            throw;
-        }
-        TimeLockSendCreated(
+    function safeSend(address recipient, uint256 timeLimit) external payable returns (address) {
+        require(msg.value > 0 && (block.timestamp + timeLimit) > block.timestamp);
+        uint256 deadline = block.timestamp + timeLimit;
+        TimeLockSend newSend = (new TimeLockSend){value: msg.value}(payable(msg.sender), payable(recipient), deadline);
+        require (address(newSend) != address(0)) ;
+        emit TimeLockSendCreated(
             msg.sender,
             recipient,
             deadline,
@@ -63,16 +61,18 @@ contract SafeSender {
         return address(newSend);
     }
     
-    function withdraw() {
-        if (msg.sender != owner) {
-            throw;
-        }
-        if (this.balance > 0 && !owner.send(this.balance)) {
-            throw;
+    function withdraw() external{
+        require (msg.sender == owner) ;
+        if (address(this).balance > 0){
+            require(owner.send(address(this).balance));
         }
     }
     
-    function () payable {
-        // why yes, thank you.
-    }
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    // function () {
+    //     throw;     // Prevents accidental sending of ether
+    // }
+    fallback() external {
+        revert();
+    }    
 }

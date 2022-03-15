@@ -16,7 +16,7 @@ contract JamCoin {
     event Transfer(address indexed from, address indexed to, uint256 value);
     
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function JamCoin() {
+    constructor() {
         /* Unless you add other functions these variables will never change */
         balanceOf[msg.sender] = 10000;
         name = "Jam Coin";     
@@ -25,16 +25,16 @@ contract JamCoin {
     }
 
     /* Send coins */
-    function transfer(address _to, uint256 _value) {
+    function transfer(address _to, uint256 _value) public {
         /* if the sender doenst have enough balance then stop */
-        if (balanceOf[msg.sender] < _value) throw;
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw;
+        require (balanceOf[msg.sender] >= _value) ;
+        require (balanceOf[_to] + _value >= balanceOf[_to]) ;
         
         /* Add and subtract new balances */
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
         
         /* Notifiy anyone listening that this transfer took place */
-        Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _value);
     }
 }
